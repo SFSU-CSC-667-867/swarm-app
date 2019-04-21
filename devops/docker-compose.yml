@@ -1,0 +1,71 @@
+version: '3.7'
+services:
+  redis:
+    image : redis:5.0.4
+    ports:
+      - "6379:6379"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - webnet
+  gateway:
+    image: bparra/gateway
+    ports:
+      - "4000:4000"
+    deploy:
+      replicas: 1
+    networks:
+      - webnet
+    environment:
+      - FRONT_END_HOST=http://frontend:3000
+      - MESSANGER_HOST=http://messanger:5000
+      - WEBSOCKET_HOST=http://websocket:6000/websocket
+  frontend:
+    image : bparra/react-demo
+    ports:
+      - "3000:3000"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - webnet
+  websocket:
+    image : bparra/websocket-demo
+    depends_on:
+      - redis
+    ports:
+      - "6000:6000"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - webnet
+    environment:
+      - REDIS_HOST=redis
+  messanger:
+    image : bparra/messanger-demo
+    depends_on:
+      - redis
+      - mongodb
+    ports:
+      - "5000:5000"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks:
+      - webnet
+    environment:
+      - REDIS_HOST=redis
+      - MONGO_HOST=mongodb://mongodb:27017
+networks:
+  webnet:
