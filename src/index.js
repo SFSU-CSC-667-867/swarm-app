@@ -16,7 +16,7 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
-const webSocket = new WebSocket('ws://' + window.location.host + (window.location.port && `:${window.location.port}`) + '/websocket');
+const webSocket = new WebSocket('ws://' + window.location.host.split(':')[0] + (window.location.port && `:${window.location.port}`) + '/websocket');
 
 
 webSocket.onmessage = (message) => {

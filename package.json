@@ -28,7 +28,7 @@
     "build-messanger" : "docker build -f devops/messanger.Dockerfile -t messanger-demo . && docker tag messanger-demo bparra/messanger-demo && docker push bparra/messanger-demo",
     "build-frontend" : "docker build -f devops/frontend.Dockerfile -t react-demo . && docker tag react-demo bparra/react-demo && docker push bparra/react-demo",
     "build-all-docker" : "",
-    "deploy" : "docker-compose pull && docker stack deploy -c devops/docker-compose.yml message-app",
+    "deploy" : "docker-compose -f devops/docker-compose.yml pull && docker stack deploy -c devops/docker-compose.yml message-app",
     "stop": "docker stack remove message-app"
   },
   "eslintConfig": {
